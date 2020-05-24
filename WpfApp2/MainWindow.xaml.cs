@@ -141,12 +141,18 @@ namespace WpfApp2
             DynamicGrid.ShowGridLines = true;
 
             ConsoleManager.Show();
-            string refSeq = "ATGCATCCCATGAC";
-            string alignSeq = "TCTATATCCGT";
+            string[] lines = File.ReadAllLines("C:\\Users\\ehabi\\source\\repos\\WpfApp2\\WpfApp2\\seqT.txt");
+            string[] lines2 = File.ReadAllLines("C:\\Users\\ehabi\\source\\repos\\WpfApp2\\WpfApp2\\seqS.txt");
 
-            int mismatch = -2;
-            int match =2;
-            int gap = -3;
+            string refSeq = lines[1];
+            string alignSeq = lines2[1];
+
+            Console.WriteLine("Mismatch :");
+            int mismatch = Int32.Parse(Console.ReadLine());
+            Console.WriteLine("Match :");
+            int match = Int32.Parse(Console.ReadLine());
+            Console.WriteLine("Gap :");
+            int gap = Int32.Parse(Console.ReadLine()); 
 
             int x = refSeq.Length+1;
             int y = alignSeq.Length+1;
@@ -225,17 +231,19 @@ namespace WpfApp2
 
                 lastx -= 1;
                 lasty -= 1;
-            } while (matrix[lastx, lasty] != 0);
+            } while (matrix[lastx-1, lasty-1]-match > 0);
 
             traceback[lastx, lasty] = 1;
             int count = 0;
+            int flag = 0;
             for (int i = 0; i < y; i++)
                 for (int j = 0; j < x; j++)
                 {
                     {
                         TextBlock txtBlock1 = new TextBlock();
                         txtBlock1.Text = string.Empty;
-                        if (traceback[i, j] == 1) { txtBlock1.Background = Brushes.Red;
+                        if (traceback[i, j] == 1) { 
+                            txtBlock1.Background = Brushes.Red;
                             txtBlock1.Text += "↖";
                             count += 1;
                         }
@@ -256,12 +264,20 @@ namespace WpfApp2
 
             for(int i = 0; i < count; i++)
             {
-                Console.Write(refSeq[maxindex[0, 0]-count+i]);
+                if (refSeq[maxindex[0, 1] - count + i]!=alignSeq[maxindex[0, 0] - count + i])
+                {
+                    continue;
+                }
+                Console.Write(refSeq[maxindex[0, 1]-count+i]);
             }
             Console.WriteLine();
             for (int i = 0; i < count; i++)
             {
-                Console.Write(refSeq[maxindex[0, 0] - count + i]);
+                if (refSeq[maxindex[0, 1] - count + i] != alignSeq[maxindex[0, 0] - count + i])
+                {
+                    continue;
+                }
+                Console.Write(refSeq[maxindex[0, 1] - count + i]);
             }
             Console.WriteLine();
             Console.WriteLine("Score is :"+max);
